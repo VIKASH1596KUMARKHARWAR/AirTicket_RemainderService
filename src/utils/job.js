@@ -34,13 +34,3 @@ const setupJobs = () => {
 };
 
 module.exports = setupJobs;
-
-/**
- *
- * [Service 1 (100qps) Publisher] ----------> message queue [ msg1,msg2 ...msg100 ]   ----------> [Service2 (20qps) Subscriber]
- *
- *
- * if want to use those msg after the process....we can even do that
- *
- * [Service2 (Publisher)] ----------> message queue [ msgs ] ----------> [Service 1 (Subscriber)]
- */
