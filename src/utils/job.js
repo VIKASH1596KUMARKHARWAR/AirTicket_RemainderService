@@ -8,28 +8,48 @@ const sender = require("../config/email-config");
  */
 
 const setupJobs = () => {
-  cron.schedule("*/2 * * * * ", async () => {
-    const response = await emailService.fetchPendingEmails();
-    console.log(response);
+  cron.schedule("*/2 * * * *", async () => {
+    try {
+      const pendingEmails = await emailService.fetchPendingEmails();
+      console.log("Pending emails:", pendingEmails);
 
-    response.forEach((email) => {
-      sender.sendMail(
-        {
-          to: email.recipientEmail,
-          subject: email.subject,
-          text: email.content,
-        },
-        async (err, data) => {
-          if (err) {
-            console.error("Error sending email:", err);
-          } else {
-            console.log("Email sent:", data);
-            await emailService.updateTicket(email.id, { status: "SUCCESS" });
-          }
+      for (const email of pendingEmails) {
+        try {
+          // 1️⃣ Send the email (under process / reminder)
+          await sender.sendMail({
+            to: email.recipientEmail,
+            subject: email.subject,
+            text: email.content,
+          });
+          console.log("Email sent:", email.recipientEmail);
+
+          // 2️⃣ Update ticket status to SUCCESS
+          await emailService.updateTicket(email.id, { status: "SUCCESS" });
+          console.log(
+            "Ticket status updated to SUCCESS for:",
+            email.recipientEmail
+          );
+
+          // 3️⃣ Send final booking confirmation
+          await sender.sendMail({
+            to: email.recipientEmail,
+            subject: "Booking Confirmed ✅",
+            text: `Hello, your booking for ${
+              email.noOfSeats || ""
+            } seats is now confirmed. Happy journey! ✈️`,
+          });
+          console.log("📧 Booking confirmation sent to:", email.recipientEmail);
+        } catch (err) {
+          console.error(
+            "Error processing email/ticket for",
+            email.recipientEmail,
+            err
+          );
         }
-      );
-    });
-    console.log(response);
+      }
+    } catch (err) {
+      console.error("Error fetching pending emails:", err);
+    }
   });
 };
 

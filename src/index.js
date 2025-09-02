@@ -17,12 +17,12 @@ const setupAndStartServer = async () => {
 
   // Start subscriber
   const channel = await createChannel();
-
-  await subscribeMessage(channel, EmailService, REMAINDER_BINDING_KEY);
+  const bindingKey = String(REMAINDER_BINDING_KEY).replace(/['"]+/g, "").trim();
+  await subscribeMessage(channel, bindingKey);
 
   app.listen(PORT, () => {
     console.log(`Server started at  ${PORT}`);
-    // jobs();
+    jobs();
   });
 };
 setupAndStartServer();
