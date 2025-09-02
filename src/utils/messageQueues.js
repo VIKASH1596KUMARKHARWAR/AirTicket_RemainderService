@@ -1,51 +1,3 @@
-// const amqplib = require("amqplib");
-// const {
-//   MESSAGE_BROKER_URL,
-//   EXCHANGE_NAME,
-// } = require("../config/server-config");
-
-// const createChannel = async () => {
-//   try {
-//     const connection = await amqplib.connect(MESSAGE_BROKER_URL);
-//     const channel = await connection.createChannel();
-//     await channel.assertExchange(EXCHANGE_NAME, "direct", false);
-//     return channel;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// const subscribeMessage = async (channel, service, binding_key) => {
-//   try {
-//     const applicationQueue = await channel.assertQueue("QUEUE_NAME");
-
-//     channel.bindQueue(applicationQueue.queue, EXCHANGE_NAME, binding_key);
-
-//     channel.consume(applicationQueue.queue, (msg) => {
-//       console.log("received data");
-//       console.log(msg.content.toString());
-//       channel.ack(msg);
-//     });
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// const publisherMessage = async (channel, binding_key, message) => {
-//   try {
-//     await channel.assertQueue("QUEUE_NAME");
-//     await channel.publish(EXCHANGE_NAME, binding_key, Buffer.from(message));
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// module.exports = {
-//   createChannel,
-//   subscribeMessage,
-//   publisherMessage,
-// };
-
 const amqplib = require("amqplib");
 const {
   MESSAGE_BROKER_URL,
@@ -64,95 +16,53 @@ const createChannel = async () => {
   }
 };
 
-// const subscribeMessage = async (channel, service, binding_key) => {
-//   try {
-//     const applicationQueue = await channel.assertQueue("QUEUE_NAME", {
-//       durable: true,
-//     });
-
-//     channel.bindQueue(applicationQueue.queue, EXCHANGE_NAME, binding_key);
-
-//     channel.consume(applicationQueue.queue, (msg) => {
-//       if (msg !== null) {
-//         console.log("✅ Received data:", msg.content.toString());
-
-//         // If you want to call some service logic:
-//         service(msg.content.toString());
-
-//         channel.ack(msg);
-//       }
-//     });
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
 const subscribeMessage = async (channel, service, binding_key) => {
   try {
     const queueName = "REMINDER_QUEUE";
 
-    // 1. Ensure the exchange exists
+    // Ensure the exchange exists
     await channel.assertExchange(EXCHANGE_NAME, "direct", { durable: true });
 
-    // 2. Ensure the queue exists
+    // Ensure the queue exists
     const applicationQueue = await channel.assertQueue(queueName, {
       durable: true,
     });
 
-    // 3. Bind the queue to the exchange with the binding key
+    // Bind the queue to the exchange with the binding key
     await channel.bindQueue(applicationQueue.queue, EXCHANGE_NAME, binding_key);
 
-    // 4. Consume messages from the queue
+    // Consume messages
     channel.consume(applicationQueue.queue, (msg) => {
       if (msg !== null) {
-        // Convert message from Buffer to string/JSON
-        const content = msg.content.toString();
-        let parsedMessage;
+        // Raw message (string)
+        const payload = JSON.parse(msg.content.toString());
         try {
-          parsedMessage = JSON.parse(content);
-        } catch {
-          parsedMessage = content;
-        }
+          if (payload.service == "DEMO_SERVICE") {
+            //DO SOMETHING
+            console.log("call demo service");
+          }
+        } catch {}
 
-        console.log(" Received data:", parsedMessage);
+        // Log everything clearly
+        console.log(" Received data:", payload);
 
-        // Call your service logic
-        service(parsedMessage);
+        // // Call service logic
+        service.myService(payload);
 
-        // Acknowledge the message
+        // Acknowledge
         channel.ack(msg);
       }
     });
 
     console.log(
-      `Subscribed to queue "${queueName}" with binding key "${binding_key}"`
+      `🚀 Subscribed to queue "${queueName}" with binding key "${binding_key}"`
     );
   } catch (error) {
-    console.error(" Error subscribing to messages:", error);
+    console.error("Error subscribing to messages:", error);
     throw error;
   }
 };
 
-// const publisherMessage = async (channel, binding_key, message) => {
-//   try {
-//     await channel.assertQueue("QUEUE_NAME");
-//     await channel.publish(EXCHANGE_NAME, binding_key, Buffer.from(message));
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// const publisherMessage = async (channel, binding_key, message) => {
-//   try {
-//     const queue = "QUEUE_NAME";
-//     await channel.assertQueue(queue, { durable: true });
-//     // channel.sendToQueue(queue, Buffer.from(message));
-//     channel.publish(EXCHANGE_NAME, binding_key, Buffer.from(message));
-//     console.log(`Message sent to queue ${queue}:`, message);
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 const publisherMessage = async (channel, binding_key, message) => {
   try {
     // Ensure the exchange exists

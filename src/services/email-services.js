@@ -26,6 +26,13 @@ const fetchPendingEmails = async (timestamp) => {
   }
 };
 
+const myService = async (data) => {
+  console.log(
+    "from the myservice : This is the message subscriber received",
+    data
+  );
+};
+
 const updateTicket = async (ticketId, data) => {
   try {
     const response = await repo.update(ticketId, data);
@@ -49,6 +56,7 @@ module.exports = {
   fetchPendingEmails,
   createNotification,
   updateTicket,
+  myService,
 };
 
 /**

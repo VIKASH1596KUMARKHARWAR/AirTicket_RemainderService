@@ -6,6 +6,7 @@ const jobs = require("./utils/job");
 
 const TicketController = require("./controllers/ticket-controller");
 const { createChannel, subscribeMessage } = require("./utils/messageQueues");
+const EmailService = require("./services/email-services");
 
 const setupAndStartServer = async () => {
   const app = express();
@@ -16,14 +17,12 @@ const setupAndStartServer = async () => {
 
   // Start subscriber
   const channel = await createChannel();
-  const myService = (msg) => {
-    console.log("Processing message in service:", msg);
-  };
-  await subscribeMessage(channel, myService, REMAINDER_BINDING_KEY);
+
+  await subscribeMessage(channel, EmailService, REMAINDER_BINDING_KEY);
 
   app.listen(PORT, () => {
     console.log(`Server started at  ${PORT}`);
-    jobs();
+    // jobs();
   });
 };
 setupAndStartServer();
