@@ -22,7 +22,7 @@ It handles **email notifications** for bookings using **RabbitMQ** and **cron jo
 
 - [AirTicket Booking Service](https://github.com/VIKASH1596KUMARKHARWAR/AirTicket_BookingService)
 
-- [AirTicket API Gateway](https://git@github.com:VIKASH1596KUMARKHARWAR/AirTicket_API_GATEWAY.git)
+- [AirTicket API Gateway] (https://github.com/VIKASH1596KUMARKHARWAR/AirTicket_API_GATEWAY)
 
 ## Assets
 
