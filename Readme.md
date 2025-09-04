@@ -14,6 +14,18 @@ It handles **email notifications** for bookings using **RabbitMQ** and **cron jo
   - Follow-up confirmation when the booking status updates
 - For testing, a **2-minute delay** is implemented to simulate real-time updates.
 
+## Related Projects / Services
+
+- [AirTicket Auth Service](https://github.com/VIKASH1596KUMARKHARWAR/Auth_Service)
+
+- [AirTicket Flight Service](https://github.com/VIKASH1596KUMARKHARWAR/FlightAndSearchService)
+
+- [AirTicket Booking Service](https://github.com/VIKASH1596KUMARKHARWAR/AirTicket_BookingService)
+
+- [AirTicket Remainder Service](https://github.com/VIKASH1596KUMARKHARWAR/AirTicket_RemainderService)
+
+## Assets
+
 ![Rabbit MQ](assets/1.png)  
 _inital_
 
