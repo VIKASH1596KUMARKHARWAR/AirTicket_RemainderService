@@ -23,6 +23,12 @@ _Process out_
 ![Rabbit MQ](assets/1.png)  
 _Our Reaminder Queue_
 
+![Pending Booking ](assets/4.png)  
+_ticket creation for the queue to service Pending Booking mark to confirm _
+
+![Email  Sent on Booking Confirmed by the cron job ](assets/5.png)  
+_ticket creation for the queue to service SendMail, Email Sent on Booking Confirmed by the cron job _
+
 ---
 
 ## Architecture
